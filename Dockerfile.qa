@@ -1,0 +1,73 @@
+# Set the base image
+FROM ubuntu
+
+# Dockerfile author 
+MAINTAINER Jamie Farnes <jamie.farnes@oerc.ox.ac.uk>
+
+# As root, install various essential packages
+USER root
+WORKDIR /home/ubuntu
+RUN apt-get update && apt-get install -y graphviz git
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
+RUN apt-get -y install python3 python3-pip
+RUN apt-get -y install build-essential
+RUN apt-get -y install python3-setuptools
+RUN apt-get -y install python3-dev
+RUN apt-get -y install python3-tk
+RUN apt-get -y install python3-numpy-dev
+
+# Install Java (JDK 8)
+RUN apt-get -y install software-properties-common
+RUN add-apt-repository -y ppa:webupd8team/java
+RUN apt-get update
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections 
+RUN apt-get -y install oracle-java8-installer
+
+# Install zookeeper, which will be turned on from the qa_aggregation.py script
+RUN apt-get -y install zookeeperd
+
+# Install git-lfs
+RUN apt-get -y install curl
+RUN apt-get -y install sudo
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+RUN apt-get -y install git-lfs
+RUN git lfs install
+
+# Then install confluent-kafka
+RUN apt-get -y install wget
+RUN wget -qO - http://packages.confluent.io/deb/3.3/archive.key | sudo apt-key add -
+RUN add-apt-repository "deb [arch=amd64] http://packages.confluent.io/deb/3.3 stable main"
+RUN apt-get update
+RUN apt-get -y install librdkafka1 librdkafka-dev
+RUN pip3 install numpy
+RUN pip3 install matplotlib
+RUN pip3 install confluent-kafka
+
+# Download the SIP DPrepB-C pipeline
+RUN git clone https://github.com/jamiefarnes/SKA-SIP-DPrepB-C-Pipeline
+
+# Download the SKA Algorithm Reference Library (ARL)
+RUN apt-get -y install libcfitsio-dev
+RUN git clone https://github.com/SKA-ScienceDataProcessor/algorithm-reference-library &&\
+    cd ./algorithm-reference-library/ &&\
+    git checkout stable-for-SIP &&\
+    python3 setup.py install &&\
+    git-lfs pull &&\
+    rm -rf ./data/vis &&\
+    rm -rf ./data/models &&\
+    rm -rf ./.git
+
+# Download the requirements for ARL
+WORKDIR /home/ubuntu/algorithm-reference-library
+RUN pip3 install -r requirements.txt
+
+# Setup/install ARL
+WORKDIR /usr/lib/python3.5
+RUN ln -s /home/ubuntu/algorithm-reference-library/data
+
+# Set the environment variables:
+ENV PYTHONPATH=$PYTHONPATH:/home/ubuntu/algorithm-reference-library/:/usr/lib/python3/dist-packages/
+
+# Define initial working directory and run the QA aggregation script
+WORKDIR /home/ubuntu
+CMD ["python3", "./SKA-SIP-DPrepB-C-Pipeline/qa/qa_aggregation.py"]
