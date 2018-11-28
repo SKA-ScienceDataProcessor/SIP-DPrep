@@ -1,12 +1,8 @@
-#!/usr/bin/env python
-
 """ms.py: A script for loading measurement set data."""
 
 import sys
 
 import numpy
-
-import time as t
 
 from astropy import constants as constants
 from astropy import units as u
@@ -16,20 +12,17 @@ from processing_components.visibility.base import create_visibility_from_ms
 from data_models.memory_data_models import Visibility, BlockVisibility, Configuration
 from data_models.polarisation import PolarisationFrame, ReceptorFrame, correlate_polarisation
 
-__author__ = "Jamie Farnes"
-__email__ = "jamie.farnes@oerc.ox.ac.uk"
-
 
 def load(msfilename='', channumselect=0, poldef='lin'):
     """Load a measurement set and define the polarisation frame.
         
         Args:
-        msfilename (str): file name of the measurement set.
-        channumselect (int): channel number to load.
-        poldef (str): definition of the polarisation frame.
+            msfilename (str): file name of the measurement set.
+            channumselect (int): channel number to load.
+            poldef (str): definition of the polarisation frame.
         
         Returns:
-        vis: The visibility data.
+            vis: The visibility data.
     """
     try:
         # Load in a single MS:
@@ -49,11 +42,11 @@ def load_maps(msfilename='', poldef='lin'):
     """Load a measurement set and define the polarisation frame.
         
         Args:
-        msfilename (str): file name of the measurement set.
-        poldef (str): definition of the polarisation frame.
+            msfilename (str): file name of the measurement set.
+            poldef (str): definition of the polarisation frame.
         
         Returns:
-        vis: The visibility data.
+            vis: The visibility data.
     """
     try:
         # Load in a single MS:
@@ -67,7 +60,8 @@ def load_maps(msfilename='', poldef='lin'):
 def create_visibility_from_ms_maps(msname, poldef):
     """ Minimal MS to Visibility converter
         
-        The MS format is much more general than the ARL Visibility so we cut many corners. This requires casacore to be
+        The MS format is much more general than the ARL Visibility so we cut many corners.
+        This requires casacore to be
         installed. If not an exception ModuleNotFoundError is raised.
         
         Creates a list of Visibilities, one per phasecentre
@@ -112,7 +106,9 @@ def create_visibility_from_ms_maps(msname, poldef):
     names = anttab.getcol('NAME')
     diameter = anttab.getcol('DISH_DIAMETER')
     xyz = anttab.getcol('POSITION')
-    configuration = Configuration(name='', data=None, location=None, names=names, xyz=xyz, mount=mount, frame=None, receptor_frame=ReceptorFrame("linear"), diameter=diameter)
+    configuration = Configuration(name='', data=None, location=None, names=names, xyz=xyz, \
+                                  mount=mount, frame=None, receptor_frame=ReceptorFrame("linear"), \
+                                  diameter=diameter)
     # Get phasecentres
     fieldtab = table('%s/FIELD' % msname, ack=False)
     pc = fieldtab.getcol('PHASE_DIR')[fields[0], 0, :]

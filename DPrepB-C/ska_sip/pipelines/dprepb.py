@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """dprepb.py: The DPrepB/C imaging pipeline for SIP."""
 
 import sys
@@ -19,27 +17,24 @@ from processing_components.image.operations import export_image_to_fits
 from processing_components.visibility.operations import append_visibility
 from processing_components.image.deconvolution import restore_cube
 
-from ska_sip.metamorphosis.filter import uv_cut
-from ska_sip.metamorphosis.convert import convert_to_stokes
-from ska_sip.outflows.images.imaging import wstack, image_2d
-from ska_sip.outflows.images.deconvolution import deconvolve_cube_complex
-from ska_sip.eventhorizon.plot import uv_cov, uv_dist
+from ska_sip.uvoperations.filter import uv_cut
+from ska_sip.uvoperations.convert import convert_to_stokes
+from ska_sip.imageoperations.images.imaging import wstack, image_2d
+from ska_sip.imageoperations.images.deconvolution import deconvolve_cube_complex
+from ska_sip.plotdata.plot import uv_cov, uv_dist
 
 sys.stdout.close()
 sys.stdout = sys.__stdout__
-
-__author__ = "Jamie Farnes"
-__email__ = "jamie.farnes@oerc.ox.ac.uk"
 
 
 def dprepb_imaging(vis_input):
     """The DPrepB/C imaging pipeline for visibility data.
         
     Args:
-    vis_input (array): array of ARL visibility data and parameters.
+        vis_input (array): array of ARL visibility data and parameters.
     
     Returns:
-    restored: clean image.
+        restored: clean image.
     """
     # Load the Input Data
     # ------------------------------------------------------
@@ -98,7 +93,9 @@ def dprepb_imaging(vis_input):
         dirty, psf = wstack(vis, npixel_advice, cell_advice, channel, RESULTS_DIR)
 
     # Deconvolve (using complex Hogbom clean):
-    comp, residual = deconvolve_cube_complex(dirty, psf, niter=100, threshold=0.001, fracthresh=0.001, window_shape='', gain=0.1, algorithm='hogbom-complex')
+    comp, residual = deconvolve_cube_complex(dirty, psf, niter=100, threshold=0.001, \
+                                             fracthresh=0.001, window_shape='', gain=0.1, \
+                                             algorithm='hogbom-complex')
 
     # Convert resolution (FWHM in arcmin) to a psfwidth (standard deviation in pixels):
     clean_res = (((FORCE_RESOLUTION/2.35482004503)/60.0)*np.pi/180.0)/cell_advice
@@ -108,7 +105,7 @@ def dprepb_imaging(vis_input):
 
     # Save to disk:
     export_image_to_fits(restored, '%s/imaging_clean_WStack-%s.fits'
-                     % (RESULTS_DIR, channel))
+                         % (RESULTS_DIR, channel))
 
     return restored
 
@@ -117,10 +114,10 @@ def arl_data_future(restored):
     """Return the data from an ARL object.
         
     Args:
-    restored (ARL object): ARL image data.
+        restored (ARL object): ARL image data.
     
     Returns:
-    restored.data: clean image.
+        restored.data: clean image.
     """
     
     return restored.data

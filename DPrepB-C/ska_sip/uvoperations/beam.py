@@ -1,24 +1,19 @@
-#!/usr/bin/env python
-
 """ beam.py: A script to load in the LOFAR station response.
 """
 
 import casacore.tables as pt
 import numpy as np
 
-__author__ = "Jamie Farnes"
-__email__ = "jamie.farnes@oerc.ox.ac.uk"
-
 
 def beam_me_up(inputs_dir, ms1):
     """Load the LOFAR station responses.
         
     Args:
-    inputs_dir (str): location of input directory.
-    ms1 (str): name of measurement set.
+        inputs_dir (str): location of input directory.
+        ms1 (str): name of measurement set.
     
     Returns:
-    beams: array of station responses.
+        beams: array of station responses.
     """
     
     #`msname`
@@ -37,7 +32,8 @@ def beam_me_up(inputs_dir, ms1):
     #compressed to single channels inside a single spectral window
     #(default: False).
     import lofar.stationresponse as st
-    beams = st.stationresponse(msname='%s/%s' % (inputs_dir, ms1), inverse=False, useElementResponse=True, useArrayFactor=True, useChanFreq=False)
+    beams = st.stationresponse(msname='%s/%s' % (inputs_dir, ms1), inverse=False, \
+                               useElementResponse=True, useArrayFactor=True, useChanFreq=False)
 
     return beams
 
@@ -46,7 +42,9 @@ def apply_station_beams(vis, beams, channel):
     #
     # This is a dummy function. It currently does nothing. It will eventually apply the LOFAR
     # stations beams to the data.
-    # Correct for the Station Beam. This mostly compensates for the element beam effects and the projection of the dipoles on the sky. However, the LOFAR fields are big, and the projection of the dipoles vary across the field of view.
+    # Correct for the Station Beam. This mostly compensates for the element beam effects and
+    # the projection of the dipoles on the sky. However, the LOFAR fields are big, and the
+    # projection of the dipoles vary across the field of view.
     """
     # times are MJD in seconds:
     times = vis.data['time']
@@ -65,7 +63,8 @@ def apply_station_beams(vis, beams, channel):
         # :,channel_number = all stations, single channel.
         response = response[:,channel]
         # Can refer to a specific station via, response[station_number]
-        # response[28] would now contain the beam response for station 28 at the previously selected time, as a 2x2 Jones matrix.
+        # response[28] would now contain the beam response for station 28 at the previously
+        # selected time, as a 2x2 Jones matrix.
         #END = t.time()
     
         first_index = indices[i]
@@ -87,8 +86,10 @@ def apply_station_beams(vis, beams, channel):
         # Need the Hermitian of the inverse of the second beam:
         beam_2 = np.transpose(np.conj(np.linalg.inv(response_2)), axes=(0,2,1))
         # Now calculate: corrected = beam_i^-1 uncorrected herm(beam_j^-1)
-        #vis.data['vis'][first_index:second_index] = np.reshape(beam_1*visi_data*beam_2,(temp_len,4))
+        #vis.data['vis'][first_index:second_index] = np.reshape(beam_1*visi_data*beam_2,\
+        #(temp_len,4))
         for q in range(len(visi_data)):
-            vis.data['vis'][q:q+1] = np.reshape( np.dot(np.dot(beam_1[q],visi_data[q]),beam_2[q]),(1,4))
+            vis.data['vis'][q:q+1] = np.reshape( np.dot(np.dot(beam_1[q],visi_data[q]),\
+            beam_2[q]),(1,4))
     """
     return vis

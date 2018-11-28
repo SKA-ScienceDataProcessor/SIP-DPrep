@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """moments.py: A set of functions for handling Faraday Moments."""
 
 import os
@@ -9,19 +7,16 @@ import numpy as np
 
 from processing_components.image.operations import import_image_from_fits, export_image_to_fits
 
-__author__ = "Jamie Farnes"
-__email__ = "jamie.farnes@oerc.ox.ac.uk"
-
 
 def load_moments_data(results_dir):
     """Load the full-Stokes images into memory.
     
     Args:
-    results_dir (str): directory to save results.
+        results_dir (str): directory to save results.
     
     Returns:
-    image_temp: ARL image data.
-    weights: array of weights per channel (1/sigma**2).
+        image_temp: ARL image data.
+        weights: array of weights per channel (1/sigma**2).
     """
     try:
         if os.path.isdir(results_dir):
@@ -51,12 +46,12 @@ def weighted_std(values, axis=0, weights=None):
     """Return the weighted average and standard deviation.
  
     Args:
-    values (numpy array): numpy array of values.
-    axis (int): axis along which to average.
-    weights (numpy array): array of weights per channel (1/sigma**2).
+        values (numpy array): numpy array of values.
+        axis (int): axis along which to average.
+        weights (numpy array): array of weights per channel (1/sigma**2).
     
     Returns:
-    weighted standard deviation: the weighted standard deviation
+        weighted standard deviation: the weighted standard deviation
     """
     average = np.average(values, axis=axis, weights=weights)
     variance = np.average((values-average)**2, axis=axis, weights=weights)
@@ -67,16 +62,16 @@ def calc_moments(imagecube, weights):
     """Calculate the moments:
         
     Args:
-    imagecube (numpy array): full-Stokes image cube.
-    weights (numpy array): array of weights per channel (1/sigma**2).
+        imagecube (numpy array): full-Stokes image cube.
+        weights (numpy array): array of weights per channel (1/sigma**2).
     
     Returns:
-    mean_q: Faraday moments image of the mean of Q.
-    mean_u: Faraday moments image of the mean of U.
-    mean_p: Faraday moments image of the mean of P.
-    sigma_q: Faraday moments image of the std. dev. of Q.
-    sigma_u: Faraday moments image of the std. dev. of U.
-    sigma_p: Faraday moments image of the std. dev. of P.
+        mean_q: Faraday moments image of the mean of Q.
+        mean_u: Faraday moments image of the mean of U.
+        mean_p: Faraday moments image of the mean of P.
+        sigma_q: Faraday moments image of the std. dev. of Q.
+        sigma_u: Faraday moments image of the std. dev. of U.
+        sigma_p: Faraday moments image of the std. dev. of P.
     """
     stokes_q = imagecube.data[:, 1, :, :]
     stokes_u = imagecube.data[:, 2, :, :]
@@ -95,15 +90,15 @@ def moments_save_to_disk(moments_im, stokes_type='q', results_dir='./results_dir
     """Save the Faraday moments images to disk.
     
     Args:
-    rmsynth (numpy array): array of complex numbers from RM Synthesis.
-    cellsize (float): advised cellsize in Faraday space.
-    maxrm_est (float): maximum observable RM (50 percent sensitivity).
-    rmtype (str): the component of the complex numbers to process and save.
-    results_dir (str): directory to save results.
-    outname (str): outname for saved file.
+        rmsynth (numpy array): array of complex numbers from RM Synthesis.
+        cellsize (float): advised cellsize in Faraday space.
+        maxrm_est (float): maximum observable RM (50 percent sensitivity).
+        rmtype (str): the component of the complex numbers to process and save.
+        results_dir (str): directory to save results.
+        outname (str): outname for saved file.
     
     Returns:
-    None
+        None
     """
     # Read in the first channel image, and appropriate it as the new moments image:
     im_moments = import_image_from_fits('%s/imaging_clean_WStack-%s.fits' % (results_dir, 0))

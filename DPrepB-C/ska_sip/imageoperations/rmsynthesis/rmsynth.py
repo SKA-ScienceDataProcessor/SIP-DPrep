@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """rmsynth.py: A set of functions for performing RM Synthesis."""
 
 import os
@@ -11,26 +9,23 @@ from processing_components.image.operations import import_image_from_fits, expor
 
 from astropy.constants import c
 
-__author__ = "Jamie Farnes"
-__email__ = "jamie.farnes@oerc.ox.ac.uk"
-
 
 def rmsynth_advice(frequency, weights):
     """Advise on the RM Synthesis parameters for fully-sampled image datacubes.
         
     Args:
-    frequency (numpy array): array of observed frequencies in Hz.
-    weights (numpy array): array of weights per channel (1/sigma**2).
+        frequency (numpy array): array of observed frequencies in Hz.
+        weights (numpy array): array of weights per channel (1/sigma**2).
     
     Returns:
-    lambdasq: array of lambda-squared values.
-    lambda0: weighted-average lambda-squared.
-    rmsf_est: estimated FWHM of RMSF.
-    scale_est: estimated maximum scale in Faraday space.
-    maxrm_est: maximum observable RM (50 percent sensitivity).
-    cellsize: advised cellsize in Faraday space.
-    npixels: advised number of pixels across the range of Faraday depths.
-    phi: array of Faraday depths.
+        lambdasq: array of lambda-squared values.
+        lambda0: weighted-average lambda-squared.
+        rmsf_est: estimated FWHM of RMSF.
+        scale_est: estimated maximum scale in Faraday space.
+        maxrm_est: maximum observable RM (50 percent sensitivity).
+        cellsize: advised cellsize in Faraday space.
+        npixels: advised number of pixels across the range of Faraday depths.
+        phi: array of Faraday depths.
     """
     lambdasq = (c.value/frequency)**2
     # lambda0 is a weighted average:
@@ -59,42 +54,43 @@ def do_rmsynth(weights, phi, complex_p, lambdasq, lambda0):
     """Perform the RM Synthesis.
     
     Args:
-    weights (numpy array): array of weights per channel (1/sigma**2).
-    phi (numpy array): array of Faraday depths.
-    complex_p (numpy array): complex polarisation data (Q+iU).
-    lambdasq (numpy array): array of lambda-squared values.
-    lambda0 (float): weighted-average lambda-squared.
+        weights (numpy array): array of weights per channel (1/sigma**2).
+        phi (numpy array): array of Faraday depths.
+        complex_p (numpy array): complex polarisation data (Q+iU).
+        lambdasq (numpy array): array of lambda-squared values.
+        lambda0 (float): weighted-average lambda-squared.
     
     Returns:
-    rmsynth: array of complex numbers from RM Synthesis.
-    rmsf: array of complex point spread function values in Faraday space.
+        rmsynth: array of complex numbers from RM Synthesis.
+        rmsf: array of complex point spread function values in Faraday space.
     """
     # Calculate size of image:
     ra_len = complex_p.shape[1]
     dec_len = complex_p.shape[2]
     # Calculate the RMSF:
     weighted_sum = np.sum(weights)**-1
-    rmsf = (weighted_sum)*np.sum(np.multiply(weights, np.exp(np.outer(phi,
+    rmsf = (weighted_sum)*np.sum(np.multiply(weights, np.exp(np.outer(phi, \
                                  -2.0*1j*(lambdasq-lambda0)))), axis=1)
     # Perform the RM Synthesis:
-    rmsynth = np.array([[(weighted_sum)*np.sum(np.multiply(
-                        complex_p[:, x, y], np.exp(np.outer(phi,
-                        -2.0*1j*(lambdasq-lambda0)))), axis=1)
+    rmsynth = np.array([[(weighted_sum)*np.sum(np.multiply(complex_p[:, x, y], \
+                        np.exp(np.outer(phi, -2.0*1j*(lambdasq-lambda0)))), \
+                        axis=1) \
                         for x in range(ra_len)]
                         for y in range(dec_len)])
     return rmsynth, rmsf, ra_len, dec_len
 
 
-def rmcube_save_to_disk(rmsynth, cellsize, maxrm_est, rmtype='abs', results_dir='./results_dir', outname='dirty'):
+def rmcube_save_to_disk(rmsynth, cellsize, maxrm_est, rmtype='abs', \
+                        results_dir='./results_dir', outname='dirty'):
     """Save the RM cubes to disk.
         
     Args:
-    rmsynth (numpy array): array of complex numbers from RM Synthesis.
-    cellsize (float): advised cellsize in Faraday space.
-    maxrm_est (float): maximum observable RM (50 percent sensitivity).
-    rmtype (str): the component of the complex numbers to process and save.
-    results_dir (str): directory to save results.
-    outname (str): outname for saved file.
+        rmsynth (numpy array): array of complex numbers from RM Synthesis.
+        cellsize (float): advised cellsize in Faraday space.
+        maxrm_est (float): maximum observable RM (50 percent sensitivity).
+        rmtype (str): the component of the complex numbers to process and save.
+        results_dir (str): directory to save results.
+        outname (str): outname for saved file.
     """
     # Read in the first channel image, and appropriate it as the new RM cube:
     im_rmsynth = import_image_from_fits('%s/imaging_clean_WStack-%s.fits' % (results_dir, 0))
@@ -136,24 +132,24 @@ def load_im_data(results_dir):
     """Load the full-Stokes images into memory.
     
     Args:
-    results_dir (str): directory to save results.
+        results_dir (str): directory to save results.
     
     Returns:
-    image_temp: ARL image data.
-    frequency: array of observed frequencies in Hz.
-    weights: array of weights per channel (1/sigma**2).
+        image_temp: ARL image data.
+        frequency: array of observed frequencies in Hz.
+        weights: array of weights per channel (1/sigma**2).
     """
     try:
         if os.path.isdir(results_dir):
             try:
                 # Load the channel 0 data as an image template:
-                image_temp = import_image_from_fits('%s/imaging_clean_WStack-%s.fits'
-                                                    % (results_dir, 0))
+                image_temp = import_image_from_fits('%s/imaging_clean_WStack-%s.fits' % \
+                                                    (results_dir, 0))
                 # Fill image_temp with the multi-frequency data:
-                image_temp.data = np.concatenate(([import_image_from_fits(
-                                                   '%s/imaging_clean_WStack-%s.fits'
-                                                    % (results_dir, channel)).data
-                                                    for channel in range(0, 40)]))
+                image_temp.data = np.concatenate(([import_image_from_fits( \
+                                                  '%s/imaging_clean_WStack-%s.fits' % \
+                                                  (results_dir, channel)).data \
+                                                  for channel in range(0, 40)]))
                 # Read the array of the channel frequencies:
                 frequency = image_temp.frequency
                 # Calculate the weights, in the form [channel, stokes, npix, npix]:

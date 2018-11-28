@@ -11,8 +11,6 @@ The pipeline is designed and intended as a demonstrator of [`Dask`](https://dask
 
 The pipeline can be deployed to a local Docker installation. No IP address is required for the scheduler, but can be manually specified as an argument to the Python code if desired. The running of this pipeline within a Docker swarm cluster on P3-AlaSKA, alongside integration with other SIP services, are currently under consideration and active development. Services such as Queues and Quality Assessment (QA) are now fully implemented in this released version - a Dockerised QA aggregator container is built during installation, with the consumed QA messages being readable via `docker logs ska-sip-dprepb-c-pipeline_qa_1`.
 
-Various additional features will be implemented and released in due course, including the source-finding and RM Synthesis codes that constitute parts of a LOFAR MSSS/MAPS pipeline. Many of the functions that are used for this purpose are already included in the code available here.
-
 The aim is to provide brief and user-friendly documentation: if any details are missing, overly verbose, or unclear, then please get in contact so that the documentation can be updated.
 
 
@@ -95,3 +93,7 @@ Two simulated datasets are included in measurement set format for the purpose of
 ## Dependencies
 
 See Dockerfiles.
+
+
+## Questions
+The code is maintained by Jamie Farnes. For any questions, please email jamie.farnes@oerc.ox.ac.uk.

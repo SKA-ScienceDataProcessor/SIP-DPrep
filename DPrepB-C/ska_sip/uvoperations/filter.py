@@ -1,24 +1,19 @@
-#!/usr/bin/env python
-
 """filter.py: The script for filtering a measurement set."""
 
 import numpy as np
 
 from processing_components.visibility.base import create_visibility_from_rows
 
-__author__ = "Jamie Farnes"
-__email__ = "jamie.farnes@oerc.ox.ac.uk"
-
 
 def uv_cut(vis, uv_max):
     """Cut the visibility data at uv-distances beyond uvmax.
         
     Args:
-    vis (obj): ARL visibility data.
-    uv_max (float): maximum uv-coordinate.
+        vis (obj): ARL visibility data.
+        uv_max (float): maximum uv-coordinate.
     
     Returns:
-    vis: New visibility data.
+        vis: New visibility data.
     """
     # Cut off data beyond the maximum uv-distance:
     uv_dist = np.sqrt(vis.data['uvw'][:, 0]**2+vis.data['uvw'][:, 1]**2)
@@ -30,13 +25,13 @@ def uv_advice(vis, uv_cutoff, pixels_per_beam):
     """Advise on the imaging parameters for fully-sampled images.
         
     Args:
-    vis (obj): ARL visibility data.
-    uv_cutoff (float): maximum intended uv-coordinate.
-    pixels_per_beam (float): number of pixel samples across the beam.
+        vis (obj): ARL visibility data.
+        uv_cutoff (float): maximum intended uv-coordinate.
+        pixels_per_beam (float): number of pixel samples across the beam.
     
     Returns:
-    npixel_advice: advised number of pixels.
-    cell_advice: advised cellsize.
+        npixel_advice: advised number of pixels.
+        cell_advice: advised cellsize.
     """
     from processing_components.imaging.base import advise_wide_field
     from astropy.constants import c

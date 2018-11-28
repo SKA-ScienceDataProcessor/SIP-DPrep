@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """plot.py: A script for plotting data."""
 
 import sys
@@ -12,9 +10,6 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 from matplotlib import pylab
 
-__author__ = "Jamie Farnes"
-__email__ = "jamie.farnes@oerc.ox.ac.uk"
-
 
 pylab.rcParams['figure.figsize'] = (4.0, 4.0)
 pylab.rcParams['image.cmap'] = 'rainbow'
@@ -24,7 +19,7 @@ def uv_cov(vis):
     """Plot the uv-coverage of the data.
         
     Args:
-    vis (obj): ARL visibility data.
+        vis (obj): ARL visibility data.
     """
     try:
         plt.clf()
@@ -67,7 +62,7 @@ def uv_dist(vis):
     """Plot the amplitude of the uv-data as a function of uv-distance.
         
     Args:
-    vis (obj): ARL visibility data.
+        vis (obj): ARL visibility data.
     """
     try:
         dist = np.sqrt(vis.data['uvw'][:, 0]**2+vis.data['uvw'][:, 1]**2)
@@ -85,8 +80,8 @@ def plt_rmsf(phi, rmsf):
     """Plot the rotation measure spread function (RMSF) of the data.
     
     Args:
-    phi (numpy array): array of Faraday depths.
-    rmsf (numpy array): array of complex point spread function values in Faraday space.
+        phi (numpy array): array of Faraday depths.
+        rmsf (numpy array): array of complex point spread function values in Faraday space.
     """
     try:
         plt.clf()
