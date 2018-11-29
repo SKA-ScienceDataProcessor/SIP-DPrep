@@ -15,10 +15,10 @@ services:
             context: .
         volumes: 
             - type: bind
-              source: ./inputs-docker
+              source: /mnt/ceph/dprepb-c/SKA-SIP-DPrepB-C-Pipeline/inputs-docker
               target: /data/inputs
             - type: bind
-              source: ./outputs-docker
+              source: /mnt/ceph/dprepb-c/SKA-SIP-DPrepB-C-Pipeline/outputs-docker
               target: /data/outputs
 
 
@@ -33,7 +33,7 @@ services:
             - "9092"
         volumes: 
             - type: bind
-              source: ./outputs-docker
+              source: /mnt/ceph/dprepb-c/SKA-SIP-DPrepB-C-Pipeline/outputs-docker
               target: /data/outputs
 
 
@@ -49,10 +49,10 @@ services:
             context: .
         volumes: 
             - type: bind
-              source: ./inputs-docker
+              source: /mnt/ceph/dprepb-c/SKA-SIP-DPrepB-C-Pipeline/inputs-docker
               target: /data/inputs
             - type: bind
-              source: ./outputs-docker
+              source: /mnt/ceph/dprepb-c/SKA-SIP-DPrepB-C-Pipeline/outputs-docker
               target: /data/outputs
 
 
