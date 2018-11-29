@@ -3,7 +3,7 @@ version: '3.6'
 services:
 
     scheduler:
-        image: ska-sip-dprepb-c-pipeline
+        image: skasip/dprepb-c-pipeline
         ports:
             - 8786:8786
             - 8787:8787   
@@ -23,7 +23,7 @@ services:
 
 
     worker:
-        image: ska-sip-dprepb-c-pipeline
+        image: skasip/dprepb-c-pipeline
         hostname: dask-worker
         command: ["dask-worker", "--memory-limit 32000000000 --resources MEM=32000000000 scheduler:8786"]
         build:
@@ -38,7 +38,7 @@ services:
 
 
     notebook:
-        image: ska_notebook
+        image: skasip/dprepb-c-pipeline
         hostname: notebook
         ports:
             - 8888:8888
@@ -57,7 +57,7 @@ services:
 
 
     qa:
-        image: qa_aggregator
+        image: skasip/dprepb-c-qa-aggregator
         hostname: qa
         expose:
             - "2181"
